@@ -2,7 +2,8 @@ from decimal import Decimal
 from web3 import Web3
 from eth_abi.abi import encode
 from dataclasses import dataclass
-from module_data import ModuleData
+from .module_data import ModuleData
+from ..utils import decimal_to_big_int
 
 
 @dataclass
@@ -14,9 +15,6 @@ class TradeModuleData(ModuleData):
     worst_fee: Decimal
     recipient_id: int
     is_bid: bool
-
-    # metadata
-    trade_id: str
 
     def to_abi_encoded(self):
         return encode(

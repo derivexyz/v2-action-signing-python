@@ -4,7 +4,7 @@ from web3 import Web3, Account
 from hexbytes import HexBytes
 from eth_abi.abi import encode
 
-from module_data import ModuleData
+from .module_data.module_data import ModuleData
 
 
 @dataclass
@@ -28,7 +28,7 @@ class SignedAction:
     :param signature_expiry_sec: The expiry time of the signature in seconds. Must be >5min from now.
     :param nonce: Unique nonce defined as <UTC_timestamp in ms><random_number_up_to_6_digits> (e.g. 1695836058725001, where 001 is the random number).
     :param module_address: The contract address of the module. Refer to Protocol Constants table in docs.lyra.finance.
-    :param module_data: Data defined by the specific protocol module (e.g. for orders use module_data.order.OrderModuleData).
+    :param module_data: Data defined by the specific protocol module (e.g. for orders use module_data.trade.TradeModuleData).
     :param DOMAIN_SEPARATOR: The domain separator of the protocol. Refer to Protocol Constants table in docs.lyra.finance.
     :param ACTION_TYPEHASH: The typehash of the action. Refer to Protocol Constants table in docs.lyra.finance.
     :param signature: The signature of the action. Use sign() to generate the signature.
