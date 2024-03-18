@@ -1,0 +1,23 @@
+[project]
+name = "v2-action-signing"
+version = "0.0.1"
+authors = [
+  { name="Lyra Finance", email="joshua@lyra.finance" },
+]
+description = "Python package to sign on-chain self-custodial requests for orders, transfers, deposits, withdrawals and RFQs."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/lyra-finance/v2-action-signing-python"
+Issues = "https://github.com/lyra-finance/v2-action-signing-python/issues"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
