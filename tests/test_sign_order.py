@@ -10,6 +10,11 @@ from decimal import Decimal
 # Constants taken from https://docs.lyra.finance/reference/protocol-constants #
 ###############################################################################
 
+# strategy:
+# 1. test: create one real test account for order debug.
+# 2. test: all other routes with debug.
+# 3. example: scripts for each route and create real accounts there.
+
 
 def test_sign_order(
     random_wallet: BaseAccount,
