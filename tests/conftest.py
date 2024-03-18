@@ -2,10 +2,22 @@
 import pytest
 import requests
 import random
+from web3 import Account
+from eth_account.signers.base import BaseAccount
 
 ###############################################################################
 # Constants taken from https://docs.lyra.finance/reference/protocol-constants #
 ###############################################################################
+
+
+@pytest.fixture
+def random_wallet() -> BaseAccount:
+    return Account.create()
+
+
+@pytest.fixture
+def random_session_key() -> BaseAccount:
+    return Account.create()
 
 
 @pytest.fixture

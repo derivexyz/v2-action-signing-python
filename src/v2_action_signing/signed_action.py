@@ -34,8 +34,8 @@ class SignedAction:
     :param signature: The signature of the action. Use sign() to generate the signature.
     """
 
-    def sign(self, private_key: str):
-        signer_wallet = Web3.eth.account.from_key(private_key)
+    def sign(self, signer_private_key: str):
+        signer_wallet = Web3().eth.account.from_key(signer_private_key)
         signature = signer_wallet.signHash(self._to_typed_data_hash().hex())
         self.signature = signature.signature.hex()
         return self.signature
@@ -88,7 +88,7 @@ class SignedAction:
                     self.action_typehash,
                     self.subaccount_id,
                     self.nonce,
-                    Web3.to_checksum_address(self.module),
+                    Web3.to_checksum_address(self.module_address),
                     Web3.keccak(self.module_data.to_abi_encoded()),
                     self.signature_expiry_sec,
                     Web3.to_checksum_address(self.owner),
