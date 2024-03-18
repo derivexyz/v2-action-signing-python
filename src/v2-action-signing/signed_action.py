@@ -1,28 +1,77 @@
+import os
+from dataclasses import dataclass
+from web3 import Web3, Account
+from hexbytes import HexBytes
+from eth_abi.abi import encode
+
+from module_data import ModuleData
+
+
 @dataclass
-class SignedAction(JSONDataClass):
+class SignedAction:
     subaccount_id: int
-    nonce: int
-    module: str
-    expiry: int
     owner: str
     signer: str
-    signature: str
-    data: SignedActionModuleData
+    signature_expiry_sec: int
+    nonce: int
+    module_address: str
+    module_data: ModuleData
+    DOMAIN_SEPARATOR: str
+    ACTION_TYPEHASH: str
+    signature: str = ""
+    """
+    Used to sign and validate actions.
+
+    :param subaccount_id: The subaccount id of the user.
+    :param owner: The owner of the account on the v2 protocol (not the session key).
+    :param signer: The signer of the action - can be the owner or a session key.
+    :param signature_expiry_sec: The expiry time of the signature in seconds. Must be >5min from now.
+    :param nonce: Unique nonce defined as <UTC_timestamp in ms><random_number_up_to_6_digits> (e.g. 1695836058725001, where 001 is the random number).
+    :param module_address: The contract address of the module. Refer to Protocol Constants table in docs.lyra.finance.
+    :param module_data: Data defined by the specific protocol module (e.g. for orders use module_data.order.OrderModuleData).
+    :param DOMAIN_SEPARATOR: The domain separator of the protocol. Refer to Protocol Constants table in docs.lyra.finance.
+    :param ACTION_TYPEHASH: The typehash of the action. Refer to Protocol Constants table in docs.lyra.finance.
+    :param signature: The signature of the action. Use sign() to generate the signature.
+    """
+
+    def sign(self, private_key: str):
+        signer_wallet = Web3.eth.account.from_key(private_key)
+        signature = signer_wallet.signHash(self._to_typed_data_hash().hex())
+        self.signature = signature.signature.hex()
+        return self.signature
 
     def validate_signature(self):
-        data_hash = self.to_typed_data_hash()
+        data_hash = self._to_typed_data_hash()
         recovered = Account._recover_hash(
             data_hash.hex(),
             signature=HexBytes(self.signature),
         )
 
         if recovered.lower() != self.signer.lower():
-            raise Error("Invalid signature")
+            raise ValueError("Invalid signature. Recovered signer does not match expected signer.")
 
-    def to_typed_data_hash(self):
-        return Web3.keccak(bytes.fromhex("1901") + DOMAIN_SEPARATOR + self.get_action_hash())
+    @property
+    def domain_separator(self) -> bytes:
+        try:
+            return bytes.fromhex(self.DOMAIN_SEPARATOR[2:])
+        except:
+            raise ValueError(
+                "Unable to extract bytes from DOMAIN_SEPARATOR. Ensure value is copied from Protocol Constants in docs.lyra.finance."
+            )
 
-    def get_action_hash(self):
+    @property
+    def action_typehash(self) -> bytes:
+        try:
+            return bytes.fromhex(os.environ.get("ACTION_TYPEHASH", "")[2:])
+        except:
+            raise ValueError(
+                "Unable to extract bytes from ACTION_TYPEHASH. Ensure value is copied from Protocol Constants in docs.lyra.finance."
+            )
+
+    def _to_typed_data_hash(self) -> HexBytes:
+        return Web3.keccak(bytes.fromhex("1901") + self.domain_separator + self._get_action_hash())
+
+    def _get_action_hash(self) -> HexBytes:
         return Web3.keccak(
             encode(
                 [
@@ -36,32 +85,14 @@ class SignedAction(JSONDataClass):
                     "address",
                 ],
                 [
-                    ACTION_TYPEHASH,
+                    self.action_typehash,
                     self.subaccount_id,
                     self.nonce,
                     Web3.to_checksum_address(self.module),
-                    Web3.keccak(self.data.to_abi_encoded()),
-                    self.expiry,
+                    Web3.keccak(self.module_data.to_abi_encoded()),
+                    self.signature_expiry_sec,
                     Web3.to_checksum_address(self.owner),
                     Web3.to_checksum_address(self.signer),
                 ],
             )
         )
-
-    def to_eth_tx_params(self):
-        return (
-            self.subaccount_id,
-            self.nonce,
-            Web3.to_checksum_address(self.module),
-            self.data.to_abi_encoded(),
-            self.expiry,
-            Web3.to_checksum_address(self.owner),
-            Web3.to_checksum_address(self.signer),
-            # bytes.fromhex(self.signature[2:]),
-        )
-
-    def sign(self):
-        signature = signer_wallet.signHash(signed_order.to_typed_data_hash().hex())
-
-        # returns the HexBytes
-        return signature.signature.hex()

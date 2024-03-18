@@ -1,9 +1,12 @@
+from decimal import Decimal
 from web3 import Web3
 from eth_abi.abi import encode
+from dataclasses import dataclass
+from module_data import ModuleData
 
 
 @dataclass
-class TradeModuleData(SignedActionModuleData):
+class TradeModuleData(ModuleData):
     asset: str
     sub_id: int
     limit_price: Decimal
