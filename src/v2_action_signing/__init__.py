@@ -3,7 +3,10 @@ from .module_data import (
     TradeModuleData,
     WithdrawModuleData,
     TransferModuleData,
-    RFQModuleData,
+    TransferDetails,
+    RFQQuoteModuleData,
+    RFQQuoteDetails,
+    RFQExecuteModuleData,
     DepositModuleData,
 )
 from .signed_action import SignedAction
