@@ -83,6 +83,8 @@ def main():
     # compare with debug route #
     ############################
 
+    # NOTE: to keep example simple, did not submit actual quote
+
     response = requests.post(
         "https://api-demo.lyra.finance/public/send_quote_debug",
         json={
