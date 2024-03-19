@@ -50,7 +50,7 @@ action = SignedAction(
 action.sign(session_key_wallet.key)
 ```
 
-For full signing examples see `examples/` in https://github.com/lyra-finance/v2-action-signing-python.
+For full signing examples see `examples/` in https://github.com/lyra-finance/v2-action-signing-python/tree/master/examples.
 
 ## Acknowledgements
 
