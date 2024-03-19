@@ -1,16 +1,13 @@
-import pytest
-from v2_action_signing import SignedAction, RFQQuoteModuleData, RFQQuoteDetails
-from eth_account.signers.base import BaseAccount
-from v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_auth_header
-from decimal import Decimal
-from web3 import Web3
 import requests
+from web3 import Web3
+from decimal import Decimal
+from websocket import create_connection
 import uuid
 
+from v2_action_signing import SignedAction, RFQQuoteDetails, RFQQuoteModuleData, utils
 
-def test_sign_rfq_quote(
-    domain_separator, action_typehash, module_addresses, live_instrument_ticker, second_live_instrument_ticker
-):
+
+def main():
 
     #########################################
     # Get existing testnet subaccoount info #
@@ -21,6 +18,32 @@ def test_sign_rfq_quote(
     web3_client = Web3()
     session_key_wallet = web3_client.eth.account.from_key(SESSION_KEY_PRIVATE_KEY)
 
+    #############################################
+    # Protocol Constants from docs.lyra.finance #
+    #############################################
+
+    DOMAIN_SEPARATOR = "0x9bcf4dc06df5d8bf23af818d5716491b995020f377d3b7b64c29ed14e3dd1105"
+    ACTION_TYPEHASH = "0x4d7a9f27c403ff9c0f19bce61d76d82f9aa29f8d6d4b0c5474607d9770d1af17"
+    RFQ_MODULE_ADDRESS = "0x4E4DD8Be1e461913D9A5DBC4B830e67a8694ebCa"
+    WEBSOCKET_URL = "wss://api-demo.lyra.finance/ws"
+
+    ##########################
+    # Get instrument details #
+    ##########################
+
+    response = requests.post(
+        "https://api-demo.lyra.finance/public/get_instruments",
+        json={
+            "expired": False,
+            "instrument_type": "option",
+            "currency": "ETH",
+        },
+        headers={"accept": "application/json", "content-type": "application/json"},
+    )
+
+    live_instrument_ticker = response.json()["result"][0]  # choose first live instrument
+    second_live_instrument_ticker = response.json()["result"][1]  # choose second live instrument
+
     #####################
     # Sign order action #
     #####################
@@ -30,9 +53,9 @@ def test_sign_rfq_quote(
         subaccount_id=subaccount_id,
         owner=SMART_CONTRACT_WALLET_ADDRESS,
         signer=session_key_wallet.address,
-        signature_expiry_sec=MAX_INT_32,
-        nonce=get_action_nonce(),
-        module_address=module_addresses["rfq"],
+        signature_expiry_sec=utils.MAX_INT_32,
+        nonce=utils.get_action_nonce(),
+        module_address=RFQ_MODULE_ADDRESS,
         module_data=RFQQuoteModuleData(
             max_fee=Decimal("1000"),
             trades=[
@@ -50,13 +73,11 @@ def test_sign_rfq_quote(
                 ),
             ],
         ),
-        DOMAIN_SEPARATOR=domain_separator,
-        ACTION_TYPEHASH=action_typehash,
+        DOMAIN_SEPARATOR=DOMAIN_SEPARATOR,
+        ACTION_TYPEHASH=ACTION_TYPEHASH,
     )
 
     action.sign(session_key_wallet.key)
-
-    assert action.signature is not None
 
     ############################
     # compare with debug route #
@@ -85,7 +106,7 @@ def test_sign_rfq_quote(
             "mmp": False,
             "nonce": action.nonce,
             "rfq_id": str(uuid.uuid4()),  # random rfq_id
-            "signature_expiry_sec": MAX_INT_32,
+            "signature_expiry_sec": utils.MAX_INT_32,
             "signature": action.signature,
             "signer": action.signer,
             "subaccount_id": subaccount_id,
@@ -95,9 +116,14 @@ def test_sign_rfq_quote(
             "content-type": "application/json",
         },
     )
-    print(response.json())
     results = response.json()["result"]
 
     assert "0x" + action.module_data.to_abi_encoded().hex() == results["encoded_data"]
     assert action._get_action_hash().hex() == results["action_hash"]
     assert action._to_typed_data_hash().hex() == results["typed_data_hash"]
+
+    print("RFQ Quote signed correctly!")
+
+
+if __name__ == "__main__":
+    main()
