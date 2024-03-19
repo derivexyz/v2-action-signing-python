@@ -71,7 +71,6 @@ class SignedAction:
     def _to_typed_data_hash(self) -> HexBytes:
         encoded_typed_data_hash = "".join(["0x1901", self.DOMAIN_SEPARATOR[2:], self._get_action_hash().hex()[2:]])
         return Web3.keccak(hexstr=encoded_typed_data_hash)
-        # return Web3.keccak(bytes.fromhex("1901") + self.domain_separator + self._get_action_hash().hex()[2:])
 
     def _get_action_hash(self) -> HexBytes:
         return Web3.keccak(

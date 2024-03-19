@@ -97,7 +97,6 @@ def main():
 
     # send order
     id = str(utils.utc_now_ms())
-    print(action)
     ws.send(
         json.dumps(
             {
@@ -125,7 +124,9 @@ def main():
         message = json.loads(ws.recv())
         if message["id"] == id:
             try:
-                return message["result"]["order"]
+                print("Got order response", message["result"]["order"])
+                print("Order signing and submission successful!")
+                break
             except KeyError as error:
                 print(message)
                 raise Exception(f"Unable to submit order {message}") from error
