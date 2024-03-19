@@ -53,3 +53,41 @@ def test_sign_order(
     action.sign(random_session_key.key)
 
     assert action.signature is not None
+
+    # compare with debug route
+
+    id = str(utils.utc_now_ms())
+    print("encoded data", action.module_data.to_abi_encoded().hex())
+    print("action_hash", action._get_action_hash().hex())
+    print("typed_data_hash", action._to_typed_data_hash().hex())
+    ws.send(
+        json.dumps(
+            {
+                "method": "private/order_debug",
+                "params": {
+                    "instrument_name": instrument_ticker["instrument_name"],
+                    "subaccount_id": SUBACCOUNT_ID,
+                    "direction": "buy",
+                    "limit_price": str(action.module_data.limit_price),
+                    "amount": str(action.module_data.amount),
+                    "signature_expiry_sec": action.signature_expiry_sec,
+                    "max_fee": str(action.module_data.max_fee),
+                    "nonce": action.nonce,
+                    "signer": action.signer,
+                    "order_type": "limit",
+                    "mmp": False,
+                    "time_in_force": "gtc",
+                    "signature": action.signature,
+                },
+                "id": id,
+            }
+        )
+    )
+    while True:
+        message = json.loads(ws.recv())
+        if message["id"] == id:
+            try:
+                print(message["result"])
+            except KeyError as error:
+                print(message)
+                raise Exception(f"Unable to submit order {message}") from error

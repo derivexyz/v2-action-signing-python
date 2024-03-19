@@ -79,7 +79,6 @@ def main():
 
     ws = create_connection(WEBSOCKET_URL)
     id = str(utils.utc_now_ms())
-    print(utils.sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY))
     ws.send(
         json.dumps(
             {
@@ -98,6 +97,7 @@ def main():
 
     # send order
     id = str(utils.utc_now_ms())
+    print(action)
     ws.send(
         json.dumps(
             {

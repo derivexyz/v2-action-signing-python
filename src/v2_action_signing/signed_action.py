@@ -62,14 +62,16 @@ class SignedAction:
     @property
     def action_typehash(self) -> bytes:
         try:
-            return bytes.fromhex(os.environ.get("ACTION_TYPEHASH", "")[2:])
+            return bytes.fromhex(self.ACTION_TYPEHASH[2:])
         except:
             raise ValueError(
                 "Unable to extract bytes from ACTION_TYPEHASH. Ensure value is copied from Protocol Constants in docs.lyra.finance."
             )
 
     def _to_typed_data_hash(self) -> HexBytes:
-        return Web3.keccak(bytes.fromhex("1901") + self.domain_separator + self._get_action_hash())
+        encoded_typed_data_hash = "".join(["0x1901", self.DOMAIN_SEPARATOR[2:], self._get_action_hash().hex()[2:]])
+        return Web3.keccak(hexstr=encoded_typed_data_hash)
+        # return Web3.keccak(bytes.fromhex("1901") + self.domain_separator + self._get_action_hash().hex()[2:])
 
     def _get_action_hash(self) -> HexBytes:
         return Web3.keccak(
