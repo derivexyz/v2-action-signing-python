@@ -18,12 +18,12 @@ Although the below actions are supported by the SDK, we recommend you use the UX
 ## Usage
 
 1. Install package:
-`pip install v2_action_signing`
+`pip install lyra_v2_action_signing`
 
 2. Sign an order
 ```python
 from web3 import Web3
-from v2_action_signing import SignedAction, TradeModuleData, utils
+from lyra_v2_action_signing import SignedAction, TradeModuleData, utils
 
 session_key_wallet = Web3().eth.account.from_key("0x2ae8be44db8a590d20bffbe3b6872df9b569147d3bf6801a35a28281a4816bbd")
 
@@ -50,7 +50,7 @@ action = SignedAction(
 action.sign(session_key_wallet.key)
 ```
 
-For full signing examples see `examples/`.
+For full signing examples see `examples/` in https://github.com/lyra-finance/v2-action-signing-python.
 
 ## Acknowledgements
 

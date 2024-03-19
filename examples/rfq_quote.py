@@ -4,7 +4,7 @@ from decimal import Decimal
 from websocket import create_connection
 import uuid
 
-from v2_action_signing import SignedAction, RFQQuoteDetails, RFQQuoteModuleData, utils
+from lyra_v2_action_signing import SignedAction, RFQQuoteDetails, RFQQuoteModuleData, utils
 
 
 def main():
