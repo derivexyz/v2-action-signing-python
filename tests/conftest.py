@@ -61,11 +61,8 @@ def random_live_instrument_ticker():
         url, json=payload, headers={"accept": "application/json", "content-type": "application/json"}
     )
     results = response.json()["result"]
-    print(len(results))
 
     # choose a random live instruments
     random_index = random.randint(0, len(results) - 1)
-
-    print(results[random_index])
 
     return results[random_index]
