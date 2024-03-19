@@ -47,7 +47,7 @@ def module_addresses():
 
 
 @pytest.fixture(scope="module")
-def random_live_instrument_ticker():
+def live_instrument_ticker():
     """
     Return all live ETH option tickers and extract sub_id.
     """
@@ -60,9 +60,23 @@ def random_live_instrument_ticker():
     response = requests.post(
         url, json=payload, headers={"accept": "application/json", "content-type": "application/json"}
     )
-    results = response.json()["result"]
 
-    # choose a random live instruments
-    random_index = random.randint(0, len(results) - 1)
+    return response.json()["result"][0]
 
-    return results[random_index]
+
+@pytest.fixture(scope="module")
+def second_live_instrument_ticker():
+    """
+    Return all live ETH option tickers and extract sub_id.
+    """
+    url = "https://api-demo.lyra.finance/public/get_instruments"
+    payload = {
+        "expired": False,
+        "instrument_type": "option",
+        "currency": "ETH",
+    }
+    response = requests.post(
+        url, json=payload, headers={"accept": "application/json", "content-type": "application/json"}
+    )
+
+    return response.json()["result"][1]
