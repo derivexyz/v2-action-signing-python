@@ -11,8 +11,8 @@ class TradeModuleData(ModuleData):
     asset: str
     sub_id: int
     limit_price: Decimal
-    desired_amount: Decimal
-    worst_fee: Decimal
+    amount: Decimal
+    max_fee: Decimal
     recipient_id: int
     is_bid: bool
 
@@ -23,8 +23,8 @@ class TradeModuleData(ModuleData):
                 Web3.to_checksum_address(self.asset),
                 self.sub_id,
                 decimal_to_big_int(self.limit_price),
-                decimal_to_big_int(self.desired_amount),
-                decimal_to_big_int(self.worst_fee),
+                decimal_to_big_int(self.amount),
+                decimal_to_big_int(self.max_fee),
                 self.recipient_id,
                 self.is_bid,
             ],

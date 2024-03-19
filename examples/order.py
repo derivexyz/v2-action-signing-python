@@ -15,7 +15,7 @@ def main():
     # Below account, subaccount, session key setup in advance via UX
     # Refer to docs.lyra.finance for creating account / depositing / creating session key via UX
 
-    SMART_CONTRACT_WALLET_ADDRESS = "0x23DB528115D72bf0Cb2311ca30Bfad7b11C36b10"
+    SMART_CONTRACT_WALLET_ADDRESS = "0x8772185a1516f0d61fC1c2524926BfC69F95d698"
     SESSION_KEY_PRIVATE_KEY = "0x2ae8be44db8a590d20bffbe3b6872df9b569147d3bf6801a35a28281a4816bbd"
     SUBACCOUNT_ID = 30769
 
@@ -62,8 +62,8 @@ def main():
             asset=instrument_ticker["base_asset_address"],
             sub_id=int(instrument_ticker["base_asset_sub_id"]),
             limit_price=Decimal("100"),
-            desired_amount=Decimal("1"),
-            worst_fee=Decimal("1000"),
+            amount=Decimal("1"),
+            max_fee=Decimal("1000"),
             recipient_id=SUBACCOUNT_ID,
             is_bid=True,
         ),
@@ -79,11 +79,12 @@ def main():
 
     ws = create_connection(WEBSOCKET_URL)
     id = str(utils.utc_now_ms())
+    print(utils.sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY))
     ws.send(
         json.dumps(
             {
                 "method": "public/login",
-                "params": utils.sign_aith_header(),
+                "params": utils.sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),
                 "id": id,
             }
         )
@@ -97,7 +98,29 @@ def main():
 
     # send order
     id = str(utils.utc_now_ms())
-    ws.send(json.dumps({"method": "private/order", "params": order, "id": id}))
+    ws.send(
+        json.dumps(
+            {
+                "method": "private/order",
+                "params": {
+                    "instrument_name": instrument_ticker["instrument_name"],
+                    "subaccount_id": SUBACCOUNT_ID,
+                    "direction": "buy",
+                    "limit_price": str(action.module_data.limit_price),
+                    "amount": str(action.module_data.amount),
+                    "signature_expiry_sec": action.signature_expiry_sec,
+                    "max_fee": str(action.module_data.max_fee),
+                    "nonce": action.nonce,
+                    "signer": action.signer,
+                    "order_type": "limit",
+                    "mmp": False,
+                    "time_in_force": "gtc",
+                    "signature": action.signature,
+                },
+                "id": id,
+            }
+        )
+    )
     while True:
         message = json.loads(ws.recv())
         if message["id"] == id:
