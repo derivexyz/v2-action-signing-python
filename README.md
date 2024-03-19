@@ -1,9 +1,26 @@
 # v2-action-signing-python
-Python package to sign on-chain self-custodial requests for orders, transfers, deposits, withdrawals and RFQs.
+Python package to sign the following on-chain self-custodial requests:
+
+1. order
+2. RFQ quote
+3. RFQ execution
+
+
+Although the below actions are supported by the SDK, we recommend you use the UX developer portal (https://docs.lyra.finance/docs/onboard-via-interface):
+
+4. create subaccount
+5. deposit
+6. withdrawal
+7. transfer
+
+
 
 ## Usage
 
-Here's an example of signing and sending an order:
+1. Install package:
+`pip install v2_action_signing`
+
+2. Sign an order
 ```python
 from web3 import Web3
 from v2_action_signing import SignedAction, TradeModuleData, utils
