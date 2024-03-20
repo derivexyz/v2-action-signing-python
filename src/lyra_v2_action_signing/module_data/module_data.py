@@ -5,3 +5,6 @@ from dataclasses import dataclass
 class ModuleData:
     def to_abi_encoded(self):
         pass
+
+    def to_json(self):
+        pass

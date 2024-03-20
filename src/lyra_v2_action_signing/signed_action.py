@@ -40,6 +40,16 @@ class SignedAction:
         self.signature = signature.signature.hex()
         return self.signature
 
+    def to_json(self):
+        return {
+            "subaccount_id": self.subaccount_id,
+            "nonce": self.nonce,
+            "signer": self.signer,
+            "signature_expiry_sec": self.signature_expiry_sec,
+            "signature": self.signature,
+            **self.module_data.to_json(),
+        }
+
     def validate_signature(self):
         data_hash = self._to_typed_data_hash()
         recovered = Account._recover_hash(

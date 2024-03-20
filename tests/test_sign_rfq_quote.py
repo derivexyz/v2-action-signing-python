@@ -37,13 +37,17 @@ def test_sign_rfq_quote(
             max_fee=Decimal("1000"),
             trades=[
                 RFQQuoteDetails(
-                    asset=live_instrument_ticker["base_asset_address"],
+                    instrument_name=live_instrument_ticker["instrument_name"],
+                    direction="buy",
+                    asset_address=live_instrument_ticker["base_asset_address"],
                     sub_id=int(live_instrument_ticker["base_asset_sub_id"]),
                     price=Decimal("50"),
                     amount=Decimal("1"),
                 ),
                 RFQQuoteDetails(
-                    asset=second_live_instrument_ticker["base_asset_address"],
+                    instrument_name=second_live_instrument_ticker["instrument_name"],
+                    direction="buy",
+                    asset_address=second_live_instrument_ticker["base_asset_address"],
                     sub_id=int(second_live_instrument_ticker["base_asset_sub_id"]),
                     price=Decimal("100"),
                     amount=Decimal("2"),
@@ -65,37 +69,51 @@ def test_sign_rfq_quote(
     response = requests.post(
         "https://api-demo.lyra.finance/public/send_quote_debug",
         json={
-            "direction": "buy",
+            **action.to_json(),
+            "direction": "buy",  # use "sell" if selling
             "label": "",
-            "legs": [
-                {
-                    "amount": str(action.module_data.trades[0].amount),
-                    "direction": "buy",
-                    "instrument_name": live_instrument_ticker["instrument_name"],
-                    "price": str(action.module_data.trades[0].price),
-                },
-                {
-                    "amount": str(action.module_data.trades[1].amount),
-                    "direction": "buy",
-                    "instrument_name": second_live_instrument_ticker["instrument_name"],
-                    "price": str(action.module_data.trades[1].price),
-                },
-            ],
-            "max_fee": str(action.module_data.max_fee),
             "mmp": False,
-            "nonce": action.nonce,
-            "rfq_id": str(uuid.uuid4()),  # random rfq_id
-            "signature_expiry_sec": MAX_INT_32,
-            "signature": action.signature,
-            "signer": action.signer,
-            "subaccount_id": subaccount_id,
+            "rfq_id": str(uuid.uuid4()),
         },
         headers={
             "accept": "application/json",
             "content-type": "application/json",
         },
     )
-    print(response.json())
+
+    # response = requests.post(
+    #     "https://api-demo.lyra.finance/public/send_quote_debug",
+    #     json={
+    #         "direction": "buy",
+    #         "label": "",
+    #         "legs": [
+    #             {
+    #                 "amount": str(action.module_data.trades[0].amount),
+    #                 "direction": "buy",
+    #                 "instrument_name": live_instrument_ticker["instrument_name"],
+    #                 "price": str(action.module_data.trades[0].price),
+    #             },
+    #             {
+    #                 "amount": str(action.module_data.trades[1].amount),
+    #                 "direction": "buy",
+    #                 "instrument_name": second_live_instrument_ticker["instrument_name"],
+    #                 "price": str(action.module_data.trades[1].price),
+    #             },
+    #         ],
+    #         "max_fee": str(action.module_data.max_fee),
+    #         "mmp": False,
+    #         "nonce": action.nonce,
+    #         "rfq_id": str(uuid.uuid4()),  # random rfq_id
+    #         "signature_expiry_sec": MAX_INT_32,
+    #         "signature": action.signature,
+    #         "signer": action.signer,
+    #         "subaccount_id": subaccount_id,
+    #     },
+    #     headers={
+    #         "accept": "application/json",
+    #         "content-type": "application/json",
+    #     },
+    # )
     results = response.json()["result"]
 
     assert "0x" + action.module_data.to_abi_encoded().hex() == results["encoded_data"]
