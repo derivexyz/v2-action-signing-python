@@ -20,6 +20,9 @@ jobs:
         build pytest requests
         --user
 
+    - name: Install project dependencies
+      run: pip install .
+
     - name: Unit-Test
       run: pytest -s
 
