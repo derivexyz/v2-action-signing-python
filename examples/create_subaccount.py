@@ -1,2 +1,7 @@
-# Refer to UX onboarding for quickest way to create subaccount via UX:
+#############################################################
+# We highly recommend onboarding via UX instead of manually #
+#############################################################
+
 # https://docs.lyra.finance/docs/ux-create-or-deposit-to-subaccount
+
+# Manual Python example is WIP.

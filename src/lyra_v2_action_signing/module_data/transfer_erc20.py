@@ -8,7 +8,7 @@ from ..utils import decimal_to_big_int
 
 
 @dataclass
-class TransferDetails:
+class TransferERC20Details:
     address: str
     sub_id: int
     amount: Decimal
@@ -22,10 +22,10 @@ class TransferDetails:
 
 
 @dataclass
-class TransferModuleData(ModuleData):
+class TransferERC20ModuleData(ModuleData):
     to_subaccount_id: int
     manager_for_new_account: str
-    transfers: List[TransferDetails]
+    transfers: List[TransferERC20Details]
 
     # metadata
     # recipient data is empty bytes

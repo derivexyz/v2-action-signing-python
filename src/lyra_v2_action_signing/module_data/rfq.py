@@ -72,15 +72,48 @@ class RFQQuoteModuleData(ModuleData):
 
 
 @dataclass
-class RFQExecuteModuleData(ModuleData):
-    order_hash: str
-    max_fee: Decimal
+class RFQExecuteModuleData(RFQQuoteModuleData):
+    """
+    params:
+    quote_direction: Literal["buy", "sell"] - Copy the quote_direction of the QUOTE which this execute is targeting.
+                                              RFQQuoteDetails.amount is always positive and is passed into the API,
+                                              but under the hood, amount sign is inverted and signed by executor.
+    max_fee: Decimal - The maximum fee the user is willing to pay for the quote.
+    trades: List[RFQQuoteDetails] - List of leg details for the quote which execute is targeting.
+    """
+
+    def _encoded_legs(self):
+        encoded_legs = encode(
+            ["(address,uint,uint,int)[]"],
+            [
+                # inverting direction of the signed quote
+                [trade.to_eth_tx_params("buy" if self.quote_direction == "sell" else "sell") for trade in self.trades],
+            ],
+        )
+
+        return encoded_legs
 
     def to_abi_encoded(self):
         return encode(
             ["bytes32", "uint"],
             [
-                HexBytes(self.order_hash),
+                Web3.keccak(self._encoded_legs()),
                 decimal_to_big_int(self.max_fee),
             ],
         )
+
+    def to_json(self):
+        legs = []
+        for leg in self.trades:
+            legs.append(
+                {
+                    "instrument_name": leg.instrument_name,
+                    "direction": str(leg.direction),
+                    "price": str(leg.price),
+                    "amount": str(leg.amount),
+                }
+            )
+        return {
+            "legs": legs,
+            "max_fee": str(self.max_fee),
+        }
