@@ -16,7 +16,7 @@ def decimal_to_big_int(value: Decimal) -> int:
     return result_value
 
 
-def get_action_nonce(nonce_iter: int | None = 0) -> int:
+def get_action_nonce(nonce_iter: int = 0) -> int:
     """
     Used to generate a unique nonce to prevent replay attacks on-chain.
 
