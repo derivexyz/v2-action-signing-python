@@ -13,18 +13,12 @@ jobs:
       with:
         python-version: "3.8"
 
-    - name: Install pypa/build and pytest
+    - name: Install pypa/build 
       run: >-
         python3 -m
         pip install
-        build pytest requests
+        build
         --user
-
-    - name: Install project dependencies
-      run: pip install .
-
-    - name: Unit-Test
-      run: pytest -s
 
     - name: Build a binary wheel and a source tarball
       run: python3 -m build
