@@ -1,7 +1,6 @@
 import pytest
 from lyra_v2_action_signing import SignedAction, TradeModuleData
-from eth_account.signers.base import BaseAccount
-from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_auth_header
+from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_rest_auth_header
 from decimal import Decimal
 from web3 import Web3
 import requests
@@ -56,7 +55,7 @@ def test_sign_order(
     # compare with debug route #
     ############################
 
-    auth_headers = sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY)
+    auth_headers = sign_rest_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY)
     response = requests.post(
         "https://api-demo.lyra.finance/private/order_debug",
         json={
@@ -75,9 +74,7 @@ def test_sign_order(
             "signature": action.signature,
         },
         headers={
-            "X-LYRAWALLET": auth_headers["wallet"],
-            "X-LYRASIGNATURE": auth_headers["signature"],
-            "X-LYRATIMESTAMP": auth_headers["timestamp"],
+            **auth_headers,
             "accept": "application/json",
             "content-type": "application/json",
         },

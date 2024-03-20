@@ -33,7 +33,19 @@ def utc_now_ms() -> int:
     return int(datetime.now(timezone.utc).timestamp() * 1000)
 
 
-def sign_auth_header(web3_client: Web3, smart_contract_wallet: str, session_key_or_wallet_private_key: str):
+def sign_rest_auth_header(web3_client: Web3, smart_contract_wallet: str, session_key_or_wallet_private_key: str):
+    timestamp = str(utc_now_ms())
+    signature = web3_client.eth.account.sign_message(
+        encode_defunct(text=timestamp), private_key=session_key_or_wallet_private_key
+    ).signature.hex()
+    return {
+        "X-LYRAWALLET": smart_contract_wallet,
+        "X-LYRATIMESTAMP": str(timestamp),
+        "X-LYRASIGNATURE": signature,
+    }
+
+
+def sign_ws_login(web3_client: Web3, smart_contract_wallet: str, session_key_or_wallet_private_key: str):
     timestamp = str(utc_now_ms())
     signature = web3_client.eth.account.sign_message(
         encode_defunct(text=timestamp), private_key=session_key_or_wallet_private_key

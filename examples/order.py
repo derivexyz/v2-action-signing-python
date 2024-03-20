@@ -83,7 +83,7 @@ def main():
         json.dumps(
             {
                 "method": "public/login",
-                "params": utils.sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),
+                "params": utils.sign_ws_login(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),
                 "id": id,
             }
         )

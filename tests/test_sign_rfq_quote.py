@@ -1,7 +1,7 @@
 import pytest
 from lyra_v2_action_signing import SignedAction, RFQQuoteModuleData, RFQQuoteDetails
 from eth_account.signers.base import BaseAccount
-from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_auth_header
+from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce
 from decimal import Decimal
 from web3 import Web3
 import requests
