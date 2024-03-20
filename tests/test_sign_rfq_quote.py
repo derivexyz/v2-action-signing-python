@@ -25,6 +25,7 @@ def test_sign_rfq_quote(
     # Sign order action #
     #####################
 
+    quote_direction = "sell"
     subaccount_id = 30769
     action = SignedAction(
         subaccount_id=subaccount_id,
@@ -34,6 +35,7 @@ def test_sign_rfq_quote(
         nonce=get_action_nonce(),
         module_address=module_addresses["rfq"],
         module_data=RFQQuoteModuleData(
+            quote_direction=quote_direction,
             max_fee=Decimal("1000"),
             trades=[
                 RFQQuoteDetails(
@@ -70,7 +72,7 @@ def test_sign_rfq_quote(
         "https://api-demo.lyra.finance/public/send_quote_debug",
         json={
             **action.to_json(),
-            "direction": "buy",  # use "sell" if selling
+            "direction": quote_direction,  # use "sell" if selling
             "label": "",
             "mmp": False,
             "rfq_id": str(uuid.uuid4()),
@@ -80,40 +82,6 @@ def test_sign_rfq_quote(
             "content-type": "application/json",
         },
     )
-
-    # response = requests.post(
-    #     "https://api-demo.lyra.finance/public/send_quote_debug",
-    #     json={
-    #         "direction": "buy",
-    #         "label": "",
-    #         "legs": [
-    #             {
-    #                 "amount": str(action.module_data.trades[0].amount),
-    #                 "direction": "buy",
-    #                 "instrument_name": live_instrument_ticker["instrument_name"],
-    #                 "price": str(action.module_data.trades[0].price),
-    #             },
-    #             {
-    #                 "amount": str(action.module_data.trades[1].amount),
-    #                 "direction": "buy",
-    #                 "instrument_name": second_live_instrument_ticker["instrument_name"],
-    #                 "price": str(action.module_data.trades[1].price),
-    #             },
-    #         ],
-    #         "max_fee": str(action.module_data.max_fee),
-    #         "mmp": False,
-    #         "nonce": action.nonce,
-    #         "rfq_id": str(uuid.uuid4()),  # random rfq_id
-    #         "signature_expiry_sec": MAX_INT_32,
-    #         "signature": action.signature,
-    #         "signer": action.signer,
-    #         "subaccount_id": subaccount_id,
-    #     },
-    #     headers={
-    #         "accept": "application/json",
-    #         "content-type": "application/json",
-    #     },
-    # )
     results = response.json()["result"]
 
     assert "0x" + action.module_data.to_abi_encoded().hex() == results["encoded_data"]
