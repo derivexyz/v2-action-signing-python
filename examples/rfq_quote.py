@@ -10,9 +10,9 @@ from lyra_v2_action_signing import SignedAction, RFQQuoteDetails, RFQQuoteModule
 def main():
     # NOTE: before quoting RFQ, reach out to Lyra Exchange to be approved for RFQ quoting
 
-    #########################################
-    # Get existing testnet subaccoount info #
-    #########################################
+    ########################################
+    # Get existing testnet subaccount info #
+    ########################################
 
     SMART_CONTRACT_WALLET_ADDRESS = "0x8772185a1516f0d61fC1c2524926BfC69F95d698"
     SESSION_KEY_PRIVATE_KEY = "0x2ae8be44db8a590d20bffbe3b6872df9b569147d3bf6801a35a28281a4816bbd"
