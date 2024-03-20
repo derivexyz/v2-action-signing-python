@@ -3,7 +3,7 @@ name: Unit-test
 on: push
 jobs:
   build:
-    name: Build distribution 📦
+    name: Unit-test 🎯
     runs-on: ubuntu-latest
 
     steps:
