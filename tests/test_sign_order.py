@@ -35,7 +35,7 @@ def test_sign_order(
         nonce=get_action_nonce(),
         module_address=module_addresses["trade"],
         module_data=TradeModuleData(
-            asset=live_instrument_ticker["base_asset_address"],
+            asset_address=live_instrument_ticker["base_asset_address"],
             sub_id=int(live_instrument_ticker["base_asset_sub_id"]),
             limit_price=Decimal("100"),
             amount=Decimal("1"),
@@ -60,18 +60,11 @@ def test_sign_order(
         "https://api-demo.lyra.finance/private/order_debug",
         json={
             "instrument_name": live_instrument_ticker["instrument_name"],
-            "subaccount_id": subaccount_id,
             "direction": "buy",
-            "limit_price": str(action.module_data.limit_price),
-            "amount": str(action.module_data.amount),
-            "signature_expiry_sec": action.signature_expiry_sec,
-            "max_fee": str(action.module_data.max_fee),
-            "nonce": action.nonce,
-            "signer": action.signer,
             "order_type": "limit",
             "mmp": False,
             "time_in_force": "gtc",
-            "signature": action.signature,
+            **action.to_json(),
         },
         headers={
             **auth_headers,

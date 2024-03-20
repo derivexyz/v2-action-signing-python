@@ -8,7 +8,7 @@ from ..utils import decimal_to_big_int
 
 @dataclass
 class TradeModuleData(ModuleData):
-    asset: str
+    asset_address: str
     sub_id: int
     limit_price: Decimal
     amount: Decimal
@@ -20,7 +20,7 @@ class TradeModuleData(ModuleData):
         return encode(
             ["address", "uint", "int", "int", "uint", "uint", "bool"],
             [
-                Web3.to_checksum_address(self.asset),
+                Web3.to_checksum_address(self.asset_address),
                 self.sub_id,
                 decimal_to_big_int(self.limit_price),
                 decimal_to_big_int(self.amount),
@@ -29,3 +29,10 @@ class TradeModuleData(ModuleData):
                 self.is_bid,
             ],
         )
+
+    def to_json(self):
+        return {
+            "limit_price": str(self.limit_price),
+            "amount": str(self.amount),
+            "max_fee": str(self.max_fee),
+        }

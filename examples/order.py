@@ -59,7 +59,7 @@ def main():
         nonce=utils.get_action_nonce(),
         module_address=TRADE_MODULE_ADDRESS,
         module_data=TradeModuleData(
-            asset=instrument_ticker["base_asset_address"],
+            asset_address=instrument_ticker["base_asset_address"],
             sub_id=int(instrument_ticker["base_asset_sub_id"]),
             limit_price=Decimal("100"),
             amount=Decimal("1"),
@@ -103,18 +103,11 @@ def main():
                 "method": "private/order",
                 "params": {
                     "instrument_name": instrument_ticker["instrument_name"],
-                    "subaccount_id": SUBACCOUNT_ID,
                     "direction": "buy",
-                    "limit_price": str(action.module_data.limit_price),
-                    "amount": str(action.module_data.amount),
-                    "signature_expiry_sec": action.signature_expiry_sec,
-                    "max_fee": str(action.module_data.max_fee),
-                    "nonce": action.nonce,
-                    "signer": action.signer,
                     "order_type": "limit",
                     "mmp": False,
                     "time_in_force": "gtc",
-                    "signature": action.signature,
+                    **action.to_json(),
                 },
                 "id": id,
             }
