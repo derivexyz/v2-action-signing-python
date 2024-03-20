@@ -1,7 +1,6 @@
 import pytest
 from lyra_v2_action_signing import SignedAction, TradeModuleData
-from eth_account.signers.base import BaseAccount
-from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_auth_header
+from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_rest_auth_header
 from decimal import Decimal
 from web3 import Web3
 import requests
@@ -36,7 +35,7 @@ def test_sign_order(
         nonce=get_action_nonce(),
         module_address=module_addresses["trade"],
         module_data=TradeModuleData(
-            asset=live_instrument_ticker["base_asset_address"],
+            asset_address=live_instrument_ticker["base_asset_address"],
             sub_id=int(live_instrument_ticker["base_asset_sub_id"]),
             limit_price=Decimal("100"),
             amount=Decimal("1"),
@@ -56,28 +55,19 @@ def test_sign_order(
     # compare with debug route #
     ############################
 
-    auth_headers = sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY)
+    auth_headers = sign_rest_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY)
     response = requests.post(
         "https://api-demo.lyra.finance/private/order_debug",
         json={
             "instrument_name": live_instrument_ticker["instrument_name"],
-            "subaccount_id": subaccount_id,
             "direction": "buy",
-            "limit_price": str(action.module_data.limit_price),
-            "amount": str(action.module_data.amount),
-            "signature_expiry_sec": action.signature_expiry_sec,
-            "max_fee": str(action.module_data.max_fee),
-            "nonce": action.nonce,
-            "signer": action.signer,
             "order_type": "limit",
             "mmp": False,
             "time_in_force": "gtc",
-            "signature": action.signature,
+            **action.to_json(),
         },
         headers={
-            "X-LYRAWALLET": auth_headers["wallet"],
-            "X-LYRASIGNATURE": auth_headers["signature"],
-            "X-LYRATIMESTAMP": auth_headers["timestamp"],
+            **auth_headers,
             "accept": "application/json",
             "content-type": "application/json",
         },

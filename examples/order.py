@@ -59,7 +59,7 @@ def main():
         nonce=utils.get_action_nonce(),
         module_address=TRADE_MODULE_ADDRESS,
         module_data=TradeModuleData(
-            asset=instrument_ticker["base_asset_address"],
+            asset_address=instrument_ticker["base_asset_address"],
             sub_id=int(instrument_ticker["base_asset_sub_id"]),
             limit_price=Decimal("100"),
             amount=Decimal("1"),
@@ -83,7 +83,7 @@ def main():
         json.dumps(
             {
                 "method": "public/login",
-                "params": utils.sign_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),
+                "params": utils.sign_ws_login(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),
                 "id": id,
             }
         )
@@ -103,18 +103,11 @@ def main():
                 "method": "private/order",
                 "params": {
                     "instrument_name": instrument_ticker["instrument_name"],
-                    "subaccount_id": SUBACCOUNT_ID,
                     "direction": "buy",
-                    "limit_price": str(action.module_data.limit_price),
-                    "amount": str(action.module_data.amount),
-                    "signature_expiry_sec": action.signature_expiry_sec,
-                    "max_fee": str(action.module_data.max_fee),
-                    "nonce": action.nonce,
-                    "signer": action.signer,
                     "order_type": "limit",
                     "mmp": False,
                     "time_in_force": "gtc",
-                    "signature": action.signature,
+                    **action.to_json(),
                 },
                 "id": id,
             }
@@ -124,7 +117,7 @@ def main():
         message = json.loads(ws.recv())
         if message["id"] == id:
             try:
-                print("Got order response", message["result"]["order"])
+                print("Got order response", json.dumps(message["result"]["order"], indent=4))
                 print("Order signing and submission successful!")
                 break
             except KeyError as error:
