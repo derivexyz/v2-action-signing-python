@@ -1,4 +1,5 @@
 import requests
+import json
 from web3 import Web3
 from decimal import Decimal
 from typing import List
@@ -87,7 +88,7 @@ def main():
         module_data=RFQQuoteModuleData(
             quote_direction=quote_direction,
             max_fee=Decimal("123"),
-            trades=rfq_legs,
+            legs=rfq_legs,
         ),
         DOMAIN_SEPARATOR=DOMAIN_SEPARATOR,
         ACTION_TYPEHASH=ACTION_TYPEHASH,
@@ -115,7 +116,7 @@ def main():
         },
     )
     print("Sent Quote!")
-    print(response.json())
+    print(json.dumps(response.json(), indent=4))
 
 
 if __name__ == "__main__":

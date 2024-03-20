@@ -117,7 +117,7 @@ def main():
         message = json.loads(ws.recv())
         if message["id"] == id:
             try:
-                print("Got order response", message["result"]["order"])
+                print("Got order response", json.dumps(message["result"]["order"], indent=4))
                 print("Order signing and submission successful!")
                 break
             except KeyError as error:

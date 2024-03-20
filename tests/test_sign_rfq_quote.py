@@ -36,7 +36,7 @@ def test_sign_rfq_quote(
         module_data=RFQQuoteModuleData(
             quote_direction=quote_direction,
             max_fee=Decimal("1000"),
-            trades=[
+            legs=[
                 RFQQuoteDetails(
                     instrument_name=live_instrument_ticker["instrument_name"],
                     direction="buy",
