@@ -8,7 +8,7 @@
 # There are 3 types of transfers, each using different module data types:
 # 1. private/transfer_erc20 routes uses the TransferERC20ModuleData type for signatures
 # 2. private/transfer_position route uses the TradeModuleData type for signatures
-# 3. private/transfer_positions (plural) uses the RFQQuoteModuleData and RFQExecuteModuleData types for signatures
+# 3. private/transfer_positions (plural) uses the MakerTransferPositionsModuleData and TakerTransferPositionsModuleData types for signatures
 
 # This example goes over #1
 
@@ -50,7 +50,7 @@ def main():
     ACTION_TYPEHASH = "0x4d7a9f27c403ff9c0f19bce61d76d82f9aa29f8d6d4b0c5474607d9770d1af17"
     TRANSFER_ERC20_MODULE_ADDRESS = "0x0CFC1a4a90741aB242cAfaCD798b409E12e68926"
     CASH_ASSET_ADDRESS = "0x6caf294DaC985ff653d5aE75b4FF8E0A66025928"  # NOT the ERC20.sol address
-    # For ETH / BTC transfers use the BaseAsset.sol address under each market table in "Protocol Constants"
+    # For Non-CASH collateral transfers use the BaseAsset.sol address under each market table in "Protocol Constants"
 
     ###################
     # Define Transfer #
@@ -126,7 +126,7 @@ def main():
             "content-type": "application/json",
         },
     )
-    print("Got RFQ Response", json.dumps(response.json(), indent=4))
+    print("Got Transfer ERC20 Response", json.dumps(response.json(), indent=4))
 
 
 if __name__ == "__main__":
