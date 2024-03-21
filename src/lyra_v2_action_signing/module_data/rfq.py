@@ -18,9 +18,9 @@ class RFQQuoteDetails:
     price: Decimal
     amount: Decimal
 
-    def to_eth_tx_params(self, quote_direction: Literal["buy", "sell"]):
+    def to_eth_tx_params(self, global_direction: Literal["buy", "sell"]):
         leg_sign = 1 if self.direction == "buy" else -1
-        quote_sign = 1 if quote_direction == "buy" else -1
+        quote_sign = 1 if global_direction == "buy" else -1
         return (
             Web3.to_checksum_address(self.asset_address),
             self.sub_id,
@@ -31,14 +31,16 @@ class RFQQuoteDetails:
 
 @dataclass
 class RFQQuoteModuleData(ModuleData):
-    quote_direction: Literal["buy", "sell"]
+    global_direction: Literal["buy", "sell"]
     max_fee: Decimal
     legs: List[RFQQuoteDetails]
 
     """
     params:
-    quote_direction: Literal["buy", "sell"] - The global direction of the whole quote. Note, RFQQuoteDetails.amount is always positive and 
-                                              is passed into the API, but the global direction and leg direction determine the final encoded value.
+    global_direction: Literal["buy", "sell"] - The global direction of the whole quote. 
+                                               E.g., global_direction="sell" and leg_direction="buy" would result in a short position.
+                                               Note, RFQQuoteDetails.amount is always positive and is passed into the API, 
+                                               but the global direction and leg direction determine the final encoded value.
     max_fee: Decimal - The maximum fee the user is willing to pay for the quote.
     legs: List[RFQQuoteDetails] - List of leg details for the quote.
     """
@@ -49,7 +51,7 @@ class RFQQuoteModuleData(ModuleData):
             [
                 (
                     decimal_to_big_int(self.max_fee),
-                    [leg.to_eth_tx_params(self.quote_direction) for leg in self.legs],
+                    [leg.to_eth_tx_params(self.global_direction) for leg in self.legs],
                 )
             ],
         )
@@ -66,6 +68,7 @@ class RFQQuoteModuleData(ModuleData):
                 }
             )
         return {
+            "direction": self.global_direction,
             "legs": legs,
             "max_fee": str(self.max_fee),
         }
@@ -75,9 +78,10 @@ class RFQQuoteModuleData(ModuleData):
 class RFQExecuteModuleData(RFQQuoteModuleData):
     """
     params:
-    quote_direction: Literal["buy", "sell"] - Copy the quote_direction of the QUOTE which this execute is targeting.
-                                              RFQQuoteDetails.amount is always positive and is passed into the API,
-                                              but under the hood, amount sign is inverted and signed by executor.
+    global_direction: Literal["buy", "sell"] - This must be the OPPOSITE of the direction of the Quote.
+                                               E.g., global_direction="sell" and leg_direction="buy" would result in a short position.
+                                               Note, RFQQuoteDetails.amount is always positive and is passed into the API,
+                                               but under the hood, amount sign is inverted and signed by executor.
     max_fee: Decimal - The maximum fee the user is willing to pay for the quote.
     legs: List[RFQQuoteDetails] - List of leg details for the quote which execute is targeting.
     """
@@ -106,6 +110,7 @@ class RFQExecuteModuleData(RFQQuoteModuleData):
                 }
             )
         return {
+            "direction": self.global_direction,
             "legs": legs,
             "max_fee": str(self.max_fee),
         }
@@ -127,30 +132,12 @@ class RFQExecuteModuleData(RFQQuoteModuleData):
             "legs": legs,
         }
 
-    @staticmethod
-    def from_poll_quote_response(response: dict):
-        return RFQExecuteModuleData(
-            quote_direction=response["direction"],
-            max_fee=Decimal(response["max_fee"]),
-            legs=[
-                RFQQuoteDetails(
-                    instrument_name=leg["instrument_name"],
-                    direction=leg["direction"],
-                    asset_address=leg["asset_address"],
-                    sub_id=leg["sub_id"],
-                    price=Decimal(leg["price"]),
-                    amount=Decimal(leg["amount"]),
-                )
-                for leg in response["legs"]
-            ],
-        )
-
     def _encoded_legs(self):
         encoded_legs = encode(
             ["(address,uint,uint,int)[]"],
             [
                 # inverting direction of the signed quote
-                [leg.to_eth_tx_params("buy" if self.quote_direction == "sell" else "sell") for leg in self.legs],
+                [leg.to_eth_tx_params("buy" if self.global_direction == "sell" else "sell") for leg in self.legs],
             ],
         )
 
