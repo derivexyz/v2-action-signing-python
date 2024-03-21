@@ -154,8 +154,8 @@ def main():
         json={
             **action.to_json(),
             "label": "",
-            "rfq_id": quote["rfq_id"],  # using random rfq_id
-            "quote_id": quote["quote_id"],  # using random qoute_id
+            "rfq_id": quote["rfq_id"],
+            "quote_id": quote["quote_id"],
         },
         headers={
             **utils.sign_rest_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),
