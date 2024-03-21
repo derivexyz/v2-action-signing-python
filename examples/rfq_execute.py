@@ -31,30 +31,37 @@ def main():
     # Get two random live instruments #
     ###################################
 
-    url = "https://api-demo.lyra.finance/public/get_instruments"
-    payload = {
-        "expired": False,
-        "instrument_type": "option",
-        "currency": "ETH",
-    }
+    url = "https://api-demo.lyra.finance/public/get_instrument"
     response = requests.post(
-        url, json=payload, headers={"accept": "application/json", "content-type": "application/json"}
+        url,
+        json={
+            "instrument_name": "ETH-20240329-3200-C",
+        },
+        headers={"accept": "application/json", "content-type": "application/json"},
     )
+    first_instrument = response.json()["result"]
 
-    first_instrument = response.json()["result"][0]
-    second_instrument = response.json()["result"][1]
+    response = requests.post(
+        url,
+        json={
+            "instrument_name": "ETH-20240329-3200-P",
+        },
+        headers={"accept": "application/json", "content-type": "application/json"},
+    )
+    second_instrument = response.json()["result"]
 
     #############
     # Send RFQs #
     #############
 
+    # Below action results in a "short" first_instrument position and "long" second_instrument position
     rfq_module_data = RFQExecuteModuleData(
-        quote_direction="buy",  # NOTE: this direction MUST match the direction of the received quote
+        global_direction="buy",
         max_fee=Decimal("1000"),
         legs=[
             RFQQuoteDetails(
                 instrument_name=first_instrument["instrument_name"],
-                direction="buy",
+                direction="sell",
                 asset_address=first_instrument["base_asset_address"],
                 sub_id=int(first_instrument["base_asset_sub_id"]),
                 price=Decimal("0"),  # will be set when quote is returned
@@ -62,7 +69,7 @@ def main():
             ),
             RFQQuoteDetails(
                 instrument_name=second_instrument["instrument_name"],
-                direction="sell",
+                direction="buy",
                 asset_address=second_instrument["base_asset_address"],
                 sub_id=int(second_instrument["base_asset_sub_id"]),
                 price=Decimal("0"),  # will be set when quote is returned
@@ -83,13 +90,14 @@ def main():
             "content-type": "application/json",
         },
     )
+    print("Got RFQ Response", json.dumps(response.json(), indent=4))
 
     ###############
     # Poll Quotes #
     ###############
 
     # can also use {wallet}.rfqs channel to listen for RFQs (same response format)
-    time.sleep(3)
+    time.sleep(5)
     response = requests.post(
         "https://api-demo.lyra.finance/private/poll_quotes",
         json={
@@ -103,13 +111,18 @@ def main():
         },
     )
 
-    try:
-        quote = response.json()["result"]["quotes"][0]
-    except IndexError:
-        print("No Quotes")
-        return
+    print("Received Quotes!", json.dumps(response.json()["result"]["quotes"], indent=4))
 
-    print("Received RFQ!", json.dumps(quote, indent=4))
+    quote = None
+    for current_quote in response.json()["result"]["quotes"]:
+        # The received quote direction must be the opposite of the RFQ direction
+        if current_quote["direction"] != rfq_module_data.global_direction:
+            quote = current_quote
+            break
+
+    if quote is None:
+        print(f"No Quotes for {first_instrument['instrument_name']} and {second_instrument['instrument_name']}")
+        return
 
     #######################
     # Sign execute action #
@@ -140,10 +153,9 @@ def main():
         "https://api-demo.lyra.finance/private/execute_quote",
         json={
             **action.to_json(),
-            "direction": rfq_module_data.quote_direction,  # NOTE: this direction MUST match the direction of the received quote
             "label": "",
-            "rfq_id": quote["rfq_id"],  # using random rfq_id
-            "quote_id": quote["quote_id"],  # using random qoute_id
+            "rfq_id": quote["rfq_id"],
+            "quote_id": quote["quote_id"],
         },
         headers={
             **utils.sign_rest_auth_header(web3_client, SMART_CONTRACT_WALLET_ADDRESS, SESSION_KEY_PRIVATE_KEY),

@@ -24,7 +24,7 @@ def test_sign_rfq_execute(
     # Sign order action #
     #####################
 
-    quote_direction = "sell"
+    global_direction = "sell"
     subaccount_id = 30769
     action = SignedAction(
         subaccount_id=subaccount_id,
@@ -34,12 +34,12 @@ def test_sign_rfq_execute(
         nonce=get_action_nonce(),
         module_address=module_addresses["rfq"],
         module_data=RFQExecuteModuleData(
-            quote_direction=quote_direction,
+            global_direction=global_direction,
             max_fee=Decimal("1000"),
             legs=[
                 RFQQuoteDetails(
                     instrument_name=live_instrument_ticker["instrument_name"],
-                    direction="buy",
+                    direction="sell",
                     asset_address=live_instrument_ticker["base_asset_address"],
                     sub_id=int(live_instrument_ticker["base_asset_sub_id"]),
                     price=Decimal("50"),
@@ -71,7 +71,6 @@ def test_sign_rfq_execute(
         "https://api-demo.lyra.finance/public/execute_quote_debug",
         json={
             **action.to_json(),
-            "direction": quote_direction,  # use "sell" if selling
             "label": "",
             "rfq_id": str(uuid.uuid4()),  # using random rfq_id
             "quote_id": str(uuid.uuid4()),  # using random qoute_id

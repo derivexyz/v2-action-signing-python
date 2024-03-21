@@ -56,7 +56,7 @@ def main():
     # Sign quote action #
     #####################
 
-    quote_direction = "sell"
+    global_direction = "sell"
     rfq_legs: List[RFQQuoteDetails] = []
     for leg in rfq["legs"]:
         instrument_ticker = requests.post(
@@ -86,7 +86,7 @@ def main():
         nonce=utils.get_action_nonce(),
         module_address=RFQ_MODULE_ADDRESS,
         module_data=RFQQuoteModuleData(
-            quote_direction=quote_direction,
+            global_direction=global_direction,
             max_fee=Decimal("123"),
             legs=rfq_legs,
         ),
@@ -104,7 +104,6 @@ def main():
         "https://api-demo.lyra.finance/private/send_quote",
         json={
             **action.to_json(),
-            "direction": quote_direction,
             "label": "",
             "mmp": False,
             "rfq_id": rfq["rfq_id"],
