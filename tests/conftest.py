@@ -35,7 +35,7 @@ def module_addresses():
     return {
         "trade": "0x87F2863866D85E3192a35A73b388BD625D83f2be",
         "withdraw": "0xe850641C5207dc5E9423fB15f89ae6031A05fd92",
-        "transfer": "0x0CFC1a4a90741aB242cAfaCD798b409E12e68926",
+        "transfer_erc20": "0x0CFC1a4a90741aB242cAfaCD798b409E12e68926",
         "rfq": "0x4E4DD8Be1e461913D9A5DBC4B830e67a8694ebCa",
         "deposit": "0x43223Db33AdA0575D2E100829543f8B04A37a1ec",
     }

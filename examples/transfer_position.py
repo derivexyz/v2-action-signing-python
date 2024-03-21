@@ -1,4 +1,4 @@
-# Manual Python example is WIP.
+# Manual Python example is WIP. Please use the multiple position transfer endpoint `private/transfer_positions` in the meantime.
 
 # NOTE:
 # There are 3 types of transfers, each using different module data types:

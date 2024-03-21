@@ -1,10 +1,10 @@
-# Manual Python example is WIP.
-
 # NOTE:
 # There are 3 types of transfers, each using different module data types:
 # 1. private/transfer_erc20 routes uses the TransferERC20ModuleData type for signatures
 # 2. private/transfer_position route uses the TradeModuleData type for signatures
 # 3. private/transfer_positions (plural) uses the RFQQuoteModuleData and RFQExecuteModuleData types for signatures
+
+# The below example is for #3
 
 import json
 import requests
@@ -31,7 +31,6 @@ def main():
     web3_client = Web3()
     session_key_wallet = web3_client.eth.account.from_key(SESSION_KEY_PRIVATE_KEY)
 
-    # NOTE: make sure recipient has enough margin to accept this transfer
     FROM_SUBACCOUNT_ID = 30769
     TO_SUBACCOUNT_ID = 31049
 
@@ -41,6 +40,7 @@ def main():
 
     DOMAIN_SEPARATOR = "0x9bcf4dc06df5d8bf23af818d5716491b995020f377d3b7b64c29ed14e3dd1105"
     ACTION_TYPEHASH = "0x4d7a9f27c403ff9c0f19bce61d76d82f9aa29f8d6d4b0c5474607d9770d1af17"
+    # multi-position transfers use RFQ_MODULE_ADDRESS
     RFQ_MODULE_ADDRESS = "0x4E4DD8Be1e461913D9A5DBC4B830e67a8694ebCa"
 
     ###################################
