@@ -10,8 +10,13 @@ import json
 import requests
 from web3 import Web3
 from decimal import Decimal
-import time
-from lyra_v2_action_signing import SignedAction, RFQQuoteDetails, RFQExecuteModuleData, RFQQuoteModuleData, utils
+from lyra_v2_action_signing import (
+    SignedAction,
+    TransferPositionsDetails,
+    MakerTransferPositionsModuleData,
+    TakerTransferPositionsModuleData,
+    utils,
+)
 
 
 def main():
@@ -66,8 +71,8 @@ def main():
     ###################
 
     # Below action results in a "short" first_instrument position and "long" second_instrument position
-    legs = [
-        RFQQuoteDetails(
+    positions = [
+        TransferPositionsDetails(
             instrument_name=first_instrument["instrument_name"],
             direction="sell",
             asset_address=first_instrument["base_asset_address"],
@@ -75,7 +80,7 @@ def main():
             price=Decimal("75"),
             amount=Decimal("0.1"),
         ),
-        RFQQuoteDetails(
+        TransferPositionsDetails(
             instrument_name=second_instrument["instrument_name"],
             direction="buy",
             asset_address=second_instrument["base_asset_address"],
@@ -92,10 +97,9 @@ def main():
         signature_expiry_sec=utils.MAX_INT_32,
         nonce=utils.get_action_nonce(),
         module_address=RFQ_MODULE_ADDRESS,
-        module_data=RFQQuoteModuleData(
+        module_data=MakerTransferPositionsModuleData(
             global_direction="buy",
-            max_fee=Decimal("1000"),
-            legs=legs,
+            positions=positions,
         ),
         DOMAIN_SEPARATOR=DOMAIN_SEPARATOR,
         ACTION_TYPEHASH=ACTION_TYPEHASH,
@@ -110,10 +114,9 @@ def main():
         signature_expiry_sec=utils.MAX_INT_32,
         nonce=utils.get_action_nonce(),
         module_address=RFQ_MODULE_ADDRESS,
-        module_data=RFQExecuteModuleData(
-            global_direction="sell",
-            max_fee=Decimal("1000"),
-            legs=legs,
+        module_data=TakerTransferPositionsModuleData(
+            global_direction="sell",  # recipient direction must be the opposite to senders
+            positions=positions,
         ),
         DOMAIN_SEPARATOR=DOMAIN_SEPARATOR,
         ACTION_TYPEHASH=ACTION_TYPEHASH,
@@ -125,16 +128,6 @@ def main():
     # Initiate Transfer #
     #####################
 
-    print(
-        json.dumps(
-            {
-                "wallet": SMART_CONTRACT_WALLET_ADDRESS,
-                "maker_params": sender_action.to_json(),
-                "taker_params": recipient_action.to_json(),
-            },
-            indent=4,
-        )
-    )
     response = requests.post(
         "https://api-demo.lyra.finance/private/transfer_positions",
         json={

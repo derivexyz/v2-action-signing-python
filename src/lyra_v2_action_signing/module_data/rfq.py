@@ -3,7 +3,6 @@ from decimal import Decimal
 from typing import List
 from web3 import Web3
 from eth_abi.abi import encode
-from hexbytes import HexBytes
 from .module_data import ModuleData
 from typing import Literal
 from ..utils import decimal_to_big_int
