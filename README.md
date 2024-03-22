@@ -4,6 +4,7 @@ Python package to sign the following on-chain self-custodial requests:
 1. order
 2. RFQ quote
 3. RFQ execution
+4. transfer positions
 
 
 Although the below actions are supported by the SDK, we recommend you use the UX developer portal (https://docs.lyra.finance/docs/onboard-via-interface):
@@ -11,7 +12,7 @@ Although the below actions are supported by the SDK, we recommend you use the UX
 4. create subaccount
 5. deposit
 6. withdrawal
-7. transfer
+7. transfer collateral
 
 
 
