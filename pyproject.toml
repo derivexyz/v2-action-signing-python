@@ -19,8 +19,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/lyra-finance/v2-action-signing-python"
-Issues = "https://github.com/lyra-finance/v2-action-signing-python/issues"
+Homepage = "https://github.com/derivexyz/v2-action-signing-python"
+Issues = "https://github.com/derivexyz/v2-action-signing-python/issues"
 
 [build-system]
 requires = ["setuptools>=61.0"]

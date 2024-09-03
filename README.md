@@ -7,7 +7,7 @@ Python package to sign the following on-chain self-custodial requests:
 4. transfer positions
 
 
-Although the below actions are supported by the SDK, we recommend you use the UX developer portal (https://docs.lyra.finance/docs/onboard-via-interface):
+Although the below actions are supported by the SDK, we recommend you use the UX developer portal (https://docs.derive.xyz/docs/onboard-via-interface):
 
 4. create subaccount
 5. deposit
@@ -44,14 +44,14 @@ action = SignedAction(
         recipient_id=30769,
         is_bid=True,
     ),
-    DOMAIN_SEPARATOR=DOMAIN_SEPARATOR, # from Protocol Constants table in docs.lyra.finance
-    ACTION_TYPEHASH=ACTION_TYPEHASH, # from Protocol Constants table in docs.lyra.finance
+    DOMAIN_SEPARATOR=DOMAIN_SEPARATOR, # from Protocol Constants table in docs.derive.xyz
+    ACTION_TYPEHASH=ACTION_TYPEHASH, # from Protocol Constants table in docs.derive.xyz
 )
 
 action.sign(session_key_wallet.key)
 ```
 
-For full signing examples see `examples/` in https://github.com/lyra-finance/v2-action-signing-python/tree/master/examples.
+For full signing examples see `examples/` in https://github.com/derivexyz/v2-action-signing-python/tree/master/examples.
 
 ## Acknowledgements
 
