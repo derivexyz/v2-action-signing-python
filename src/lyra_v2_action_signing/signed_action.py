@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from web3 import Web3, Account
 from hexbytes import HexBytes
 from eth_abi.abi import encode
+from eth_account.messages import encode_defunct
 
 from .module_data.module_data import ModuleData
 
@@ -36,7 +37,10 @@ class SignedAction:
 
     def sign(self, signer_private_key: str):
         signer_wallet = Web3().eth.account.from_key(signer_private_key)
-        signature = signer_wallet.signHash(self._to_typed_data_hash().hex())
+        # encoded = encode_defunct(self._to_typed_data_hash().hex())
+
+        encoded = encode_defunct(self._to_typed_data_hash())
+        signature = signer_wallet.sign_message(encoded)
         self.signature = signature.signature.hex()
         return self.signature
 
