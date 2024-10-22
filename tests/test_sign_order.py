@@ -73,7 +73,6 @@ def test_sign_order(
         },
     )
 
-    print(action._to_typed_data_hash().hex())
     results = response.json()["result"]
 
     assert ("0x" + action._get_action_hash().hex()) == results["action_hash"]
