@@ -1,6 +1,6 @@
 [project]
 name = "lyra_v2_action_signing"
-version = "0.0.5"
+version = "0.0.6"
 authors = [
   { name="Lyra Finance", email="joshua@lyra.finance" },
 ]
