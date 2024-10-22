@@ -97,6 +97,8 @@ def main():
 
     # send order
     id = str(utils.utc_now_ms())
+    print(action.to_json())
+    print(action.validate_signature())
     ws.send(
         json.dumps(
             {

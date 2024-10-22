@@ -84,3 +84,5 @@ def test_sign_rfq_quote(
     assert "0x" + action.module_data.to_abi_encoded().hex() == results["encoded_data"]
     assert "0x" + action._get_action_hash().hex() == results["action_hash"]
     assert "0x" + action._to_typed_data_hash().hex() == results["typed_data_hash"]
+
+    action.validate_signature()
