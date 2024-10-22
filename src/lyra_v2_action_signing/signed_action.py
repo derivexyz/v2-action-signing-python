@@ -37,10 +37,7 @@ class SignedAction:
 
     def sign(self, signer_private_key: str):
         signer_wallet = Web3().eth.account.from_key(signer_private_key)
-        # encoded = encode_defunct(self._to_typed_data_hash().hex())
-
-        encoded = encode_defunct(self._to_typed_data_hash())
-        signature = signer_wallet.sign_message(encoded)
+        signature = signer_wallet.unsafe_sign_hash(self._to_typed_data_hash())
         self.signature = signature.signature.hex()
         return self.signature
 
