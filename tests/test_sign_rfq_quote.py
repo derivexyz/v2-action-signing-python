@@ -82,5 +82,5 @@ def test_sign_rfq_quote(
     )
     results = response.json()["result"]
     assert "0x" + action.module_data.to_abi_encoded().hex() == results["encoded_data"]
-    assert action._get_action_hash().hex() == results["action_hash"]
-    assert action._to_typed_data_hash().hex() == results["typed_data_hash"]
+    assert "0x" + action._get_action_hash().hex() == results["action_hash"]
+    assert "0x" + action._to_typed_data_hash().hex() == results["typed_data_hash"]
