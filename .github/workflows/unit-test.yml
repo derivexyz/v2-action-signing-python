@@ -23,5 +23,8 @@ jobs:
     - name: Install project dependencies
       run: pip install -r requirements.txt
 
+    - name: Install current package
+      run: pip install .
+
     - name: Unit-Test
       run: pytest -s
