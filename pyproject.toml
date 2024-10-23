@@ -6,7 +6,7 @@ authors = [
 ]
 description = "Python package to sign on-chain self-custodial requests for orders, transfers, deposits, withdrawals and RFQs."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
