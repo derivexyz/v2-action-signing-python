@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from web3 import Web3, Account
 from hexbytes import HexBytes
 from eth_abi.abi import encode
-from eth_account.messages import encode_defunct
 
 from .module_data.module_data import ModuleData
 

@@ -11,7 +11,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.8"
+        python-version: "3.9"
 
     - name: Install pytest
       run: >-
@@ -21,7 +21,13 @@ jobs:
         --user
 
     - name: Install project dependencies
+      run: pip install -r requirements.txt
+
+    - name: Install current package
       run: pip install .
+
+    - name: Print installed packages
+      run: pip list
 
     - name: Unit-Test
       run: pytest -s
