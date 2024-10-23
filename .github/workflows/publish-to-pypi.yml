@@ -13,6 +13,9 @@ jobs:
       with:
         python-version: "3.8"
 
+    - name: Install project dependencies
+      run: pip install -r requirements.txt
+
     - name: Install pypa/build 
       run: >-
         python3 -m
