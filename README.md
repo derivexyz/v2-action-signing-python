@@ -14,7 +14,7 @@ Although the below actions are supported by the SDK, we recommend you use the UX
 6. withdrawal
 7. transfer collateral
 
-
+⚠️ **Warning:** Note, the `owner` address and the `X-LyraWallet` is the Derive wallet address of the user. This is NOT your original EOA, but the smart contract wallet on the Derive Chain. To find it in the website go to Home -> Developers -> "Derive Wallet".
 
 ## Usage
 
@@ -30,7 +30,8 @@ session_key_wallet = Web3().eth.account.from_key("0x2ae8be44db8a590d20bffbe3b687
 
 action = SignedAction(
     subaccount_id=30769,
-    owner=SMART_CONTRACT_WALLET_ADDRESS, # from Protocol Constants table in docs.lyra.finance
+    # The Derive wallet address (not "owner") of account. This is NOT your original EOA, but the smart contract wallet on the Derive Chain. To find it in the website go to Home -> Developers -> "Derive Wallet".
+    owner=SMART_CONTRACT_WALLET_ADDRESS,
     signer=session_key_wallet.address,
     signature_expiry_sec=utils.MAX_INT_32,
     nonce=utils.get_action_nonce(),
