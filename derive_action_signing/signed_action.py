@@ -27,16 +27,16 @@ class SignedAction:
     :param signer: The signer of the action - can be the owner or a session key.
     :param signature_expiry_sec: The expiry time of the signature in seconds. Must be >5min from now.
     :param nonce: Unique nonce defined as <UTC_timestamp in ms><random_number_up_to_6_digits> (e.g. 1695836058725001, where 001 is the random number).
-    :param module_address: The contract address of the module. Refer to Protocol Constants table in docs.lyra.finance.
+    :param module_address: The contract address of the module. Refer to Protocol Constants table in docs.derive.xyz.
     :param module_data: Data defined by the specific protocol module (e.g. for orders use module_data.trade.TradeModuleData).
-    :param DOMAIN_SEPARATOR: The domain separator of the protocol. Refer to Protocol Constants table in docs.lyra.finance.
-    :param ACTION_TYPEHASH: The typehash of the action. Refer to Protocol Constants table in docs.lyra.finance.
+    :param DOMAIN_SEPARATOR: The domain separator of the protocol. Refer to Protocol Constants table in docs.derive.xyz.
+    :param ACTION_TYPEHASH: The typehash of the action. Refer to Protocol Constants table in docs.derive.xyz.
     :param signature: The signature of the action. Use sign() to generate the signature.
     """
 
     def sign(self, signer_private_key: str):
         signer_wallet = Web3().eth.account.from_key(signer_private_key)
-        signature = signer_wallet.unsafe_sign_hash(self._to_typed_data_hash())
+        signature: Account = signer_wallet.unsafe_sign_hash(self._to_typed_data_hash())
         self.signature = signature.signature.hex()
         return self.signature
 
@@ -66,7 +66,7 @@ class SignedAction:
             return bytes.fromhex(self.DOMAIN_SEPARATOR[2:])
         except:
             raise ValueError(
-                "Unable to extract bytes from DOMAIN_SEPARATOR. Ensure value is copied from Protocol Constants in docs.lyra.finance."
+                "Unable to extract bytes from DOMAIN_SEPARATOR. Ensure value is copied from Protocol Constants in docs.derive.xyz."
             )
 
     @property
@@ -75,7 +75,7 @@ class SignedAction:
             return bytes.fromhex(self.ACTION_TYPEHASH[2:])
         except:
             raise ValueError(
-                "Unable to extract bytes from ACTION_TYPEHASH. Ensure value is copied from Protocol Constants in docs.lyra.finance."
+                "Unable to extract bytes from ACTION_TYPEHASH. Ensure value is copied from Protocol Constants in docs.derive.xyz."
             )
 
     def _to_typed_data_hash(self) -> HexBytes:

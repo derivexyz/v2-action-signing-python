@@ -1,6 +1,6 @@
 import pytest
-from lyra_v2_action_signing import SignedAction, RFQExecuteModuleData, RFQQuoteDetails
-from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce
+from derive_action_signing import SignedAction, RFQExecuteModuleData, RFQQuoteDetails
+from derive_action_signing.utils import MAX_INT_32, get_action_nonce
 from decimal import Decimal
 from web3 import Web3
 import requests

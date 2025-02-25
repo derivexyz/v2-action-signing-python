@@ -6,7 +6,7 @@ from web3 import Account
 from eth_account.signers.base import BaseAccount
 
 ###############################################################################
-# Constants taken from https://docs.lyra.finance/reference/protocol-constants #
+# Constants taken from https://docs.derive.finance/reference/protocol-constants #
 ###############################################################################
 
 
