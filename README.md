@@ -60,5 +60,7 @@ Thank you 8baller for building a full Python client for the v2 API. Much of the 
 
 ## Developers
 
-1. Create venv and run `pip install -e .`, this reflects changes in package immediately in venv
-2. Install dev related packages with `pip install -r requirements-dev.txt`
+1. Install Poetry: curl -sSL https://install.python-poetry.org | python3 -
+2. `poetry install`
+3. `poetry shell` (activate venv)
+4. `pytest`

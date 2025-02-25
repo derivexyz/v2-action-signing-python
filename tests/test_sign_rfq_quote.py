@@ -20,6 +20,30 @@ def test_sign_rfq_quote(
     web3_client = Web3()
     session_key_wallet = web3_client.eth.account.from_key(SESSION_KEY_PRIVATE_KEY)
 
+    ########################
+    # Create legs and sort #
+    ########################
+    legs = [
+        RFQQuoteDetails(
+            instrument_name=live_instrument_ticker["instrument_name"],
+            direction="buy",
+            asset_address=live_instrument_ticker["base_asset_address"],
+            sub_id=int(live_instrument_ticker["base_asset_sub_id"]),
+            price=Decimal("50"),
+            amount=Decimal("1"),
+        ),
+        RFQQuoteDetails(
+            instrument_name=second_live_instrument_ticker["instrument_name"],
+            direction="buy",
+            asset_address=second_live_instrument_ticker["base_asset_address"],
+            sub_id=int(second_live_instrument_ticker["base_asset_sub_id"]),
+            price=Decimal("100"),
+            amount=Decimal("2"),
+        ),
+    ]
+    sorted_legs = list(sorted(legs, key=lambda leg: leg.instrument_name))
+
+
     #####################
     # Sign order action #
     #####################
@@ -36,24 +60,7 @@ def test_sign_rfq_quote(
         module_data=RFQQuoteModuleData(
             global_direction=global_direction,
             max_fee=Decimal("1000"),
-            legs=[
-                RFQQuoteDetails(
-                    instrument_name=live_instrument_ticker["instrument_name"],
-                    direction="buy",
-                    asset_address=live_instrument_ticker["base_asset_address"],
-                    sub_id=int(live_instrument_ticker["base_asset_sub_id"]),
-                    price=Decimal("50"),
-                    amount=Decimal("1"),
-                ),
-                RFQQuoteDetails(
-                    instrument_name=second_live_instrument_ticker["instrument_name"],
-                    direction="buy",
-                    asset_address=second_live_instrument_ticker["base_asset_address"],
-                    sub_id=int(second_live_instrument_ticker["base_asset_sub_id"]),
-                    price=Decimal("100"),
-                    amount=Decimal("2"),
-                ),
-            ],
+            legs=sorted_legs,
         ),
         DOMAIN_SEPARATOR=domain_separator,
         ACTION_TYPEHASH=action_typehash,
@@ -64,7 +71,7 @@ def test_sign_rfq_quote(
     assert action.signature is not None
 
     ############################
-    # compare with debug route #
+    # Compare with debug route #
     ############################
 
     response = requests.post(
@@ -80,6 +87,8 @@ def test_sign_rfq_quote(
             "content-type": "application/json",
         },
     )
+
+    print("test sign rfq quote response", response.json())
     results = response.json()["result"]
     assert "0x" + action.module_data.to_abi_encoded().hex() == results["encoded_data"]
     assert "0x" + action._get_action_hash().hex() == results["action_hash"]

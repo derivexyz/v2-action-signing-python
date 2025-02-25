@@ -51,17 +51,7 @@ def live_instrument_ticker():
     """
     Return all live ETH option tickers and extract sub_id.
     """
-    url = "https://api-demo.lyra.finance/public/get_instruments"
-    payload = {
-        "expired": False,
-        "instrument_type": "option",
-        "currency": "ETH",
-    }
-    response = requests.post(
-        url, json=payload, headers={"accept": "application/json", "content-type": "application/json"}
-    )
-
-    return response.json()["result"][0]
+    return _get_live_instrument_ticker(nth=0)
 
 
 @pytest.fixture(scope="module")
@@ -69,6 +59,9 @@ def second_live_instrument_ticker():
     """
     Return all live ETH option tickers and extract sub_id.
     """
+    return _get_live_instrument_ticker(nth=1)
+
+def _get_live_instrument_ticker(nth=0):
     url = "https://api-demo.lyra.finance/public/get_instruments"
     payload = {
         "expired": False,
@@ -79,4 +72,12 @@ def second_live_instrument_ticker():
         url, json=payload, headers={"accept": "application/json", "content-type": "application/json"}
     )
 
-    return response.json()["result"][1]
+    # return the first is_active true instrument
+    for instrument in response.json()["result"]:
+        if instrument["is_active"]:
+            nth -= 1
+        
+        if nth == -1:
+            return instrument
+
+    raise ValueError("No active instrument found")
