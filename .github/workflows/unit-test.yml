@@ -23,8 +23,5 @@ jobs:
       run: poetry install
 
 
-    - name: Print installed packages
-      run: poetry shell
-
     - name: Unit-Test
       run: poetry run pytest -s
