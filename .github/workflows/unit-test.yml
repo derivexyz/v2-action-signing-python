@@ -1,6 +1,8 @@
 name: Unit-test
 
-on: push
+on: 
+  push:
+  workflow_dispatch:
 jobs:
   build:
     name: Unit-test 🎯
