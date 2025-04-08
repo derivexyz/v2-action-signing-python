@@ -17,7 +17,7 @@ import json
 from web3 import Web3
 from decimal import Decimal
 
-from lyra_v2_action_signing import (
+from derive_action_signing import (
     SignedAction,
     TransferERC20Details,
     SenderTransferERC20ModuleData,

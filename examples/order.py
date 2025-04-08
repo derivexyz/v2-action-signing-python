@@ -4,7 +4,7 @@ from decimal import Decimal
 from websocket import create_connection
 import json
 
-from lyra_v2_action_signing import SignedAction, TradeModuleData, utils
+from derive_action_signing import SignedAction, TradeModuleData, utils
 
 
 def main():

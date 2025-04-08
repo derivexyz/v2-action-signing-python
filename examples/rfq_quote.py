@@ -4,7 +4,7 @@ from web3 import Web3
 from decimal import Decimal
 from typing import List
 
-from lyra_v2_action_signing import SignedAction, RFQQuoteDetails, RFQQuoteModuleData, utils
+from derive_action_signing import SignedAction, RFQQuoteDetails, RFQQuoteModuleData, utils
 
 
 def main():
