@@ -1,6 +1,8 @@
 name: Unit-test
 
-on: push
+on: 
+  push:
+  workflow_dispatch:
 jobs:
   build:
     name: Unit-test 🎯
@@ -13,21 +15,15 @@ jobs:
       with:
         python-version: "3.9"
 
-    - name: Install pytest
-      run: >-
-        python3 -m
-        pip install
-        pytest requests
-        --user
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
 
     - name: Install project dependencies
-      run: pip install -r requirements.txt
+      run: poetry install
 
-    - name: Install current package
-      run: pip install .
-
-    - name: Print installed packages
-      run: pip list
 
     - name: Unit-Test
-      run: pytest -s
+      run: poetry run pytest -s

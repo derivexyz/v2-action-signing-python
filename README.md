@@ -19,12 +19,12 @@ Although the below actions are supported by the SDK, we recommend you use the UX
 ## Usage
 
 1. Install package:
-`pip install lyra_v2_action_signing`
+`pip install derive_action_signing`
 
 2. Sign an order
 ```python
 from web3 import Web3
-from lyra_v2_action_signing import SignedAction, TradeModuleData, utils
+from derive_action_signing import SignedAction, TradeModuleData, utils
 
 session_key_wallet = Web3().eth.account.from_key("0x2ae8be44db8a590d20bffbe3b6872df9b569147d3bf6801a35a28281a4816bbd")
 
@@ -60,5 +60,7 @@ Thank you 8baller for building a full Python client for the v2 API. Much of the 
 
 ## Developers
 
-1. Create venv and run `pip install -e .`, this reflects changes in package immediately in venv
-2. Install dev related packages with `pip install -r requirements-dev.txt`
+1. Install Poetry: curl -sSL https://install.python-poetry.org | python3 -
+2. `poetry install`
+3. `poetry shell` (activate venv)
+4. `pytest`

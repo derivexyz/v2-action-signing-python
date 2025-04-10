@@ -1,28 +1,37 @@
-[project]
-name = "lyra_v2_action_signing"
-version = "0.0.7"
+[tool.poetry]
+name = "derive_action_signing"
+version = "0.0.10"
 authors = [
-  { name="Lyra Finance", email="joshua@lyra.finance" },
+  "Derive.xyz <joshua@derive.xyz>",
+  "8baller <8baller@station.codes>"
 ]
 description = "Python package to sign on-chain self-custodial requests for orders, transfers, deposits, withdrawals and RFQs."
 readme = "README.md"
-requires-python = ">=3.9"
+packages = [{include = "derive_action_signing"}]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "eth-abi>=4.2.1",
-    "web3>=6.4.0",
-    "hexbytes>=0.3.1"
-]
 
-[project.urls]
+[tool.poetry.urls]
 Homepage = "https://github.com/derivexyz/v2-action-signing-python"
-Issues = "https://github.com/derivexyz/v2-action-signing-python/issues"
+Repository = "https://github.com/derivexyz/v2-action-signing-python"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+eth-abi = ">=4.2.1"
+web3 = ">=6.4.0,<7.0.0"
+hexbytes = ">=0.3.1"
+eth-account = ">=0.13.4"
+setuptools = "^75.8.0"
+eth-typing = "4.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=3.0"
+websocket-client = ">=1.6.4"
+requests = ">=2.32.3"
 
 [build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

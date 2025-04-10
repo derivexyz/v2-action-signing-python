@@ -1,6 +1,6 @@
 import pytest
-from lyra_v2_action_signing import SignedAction, TradeModuleData
-from lyra_v2_action_signing.utils import MAX_INT_32, get_action_nonce, sign_rest_auth_header
+from derive_action_signing import SignedAction, TradeModuleData
+from derive_action_signing.utils import MAX_INT_32, get_action_nonce, sign_rest_auth_header
 from decimal import Decimal
 from web3 import Web3
 import requests
@@ -73,6 +73,7 @@ def test_sign_order(
         },
     )
 
+    print("test sign order response", response.json())
     results = response.json()["result"]
 
     assert ("0x" + action._get_action_hash().hex()) == results["action_hash"]
