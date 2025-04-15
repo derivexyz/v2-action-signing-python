@@ -13,6 +13,7 @@ class DepositModuleData(ModuleData):
     amount: Decimal
     asset: str
     manager: str
+    asset_name: str
 
     # metadata
     decimals: int
@@ -32,6 +33,6 @@ class DepositModuleData(ModuleData):
     def to_json(self):
         return {
             "amount": str(self.amount),
-            "asset_name": "USDC",
+            "asset_name": self.asset_name,
             "is_atomic_signing": False,
         }
