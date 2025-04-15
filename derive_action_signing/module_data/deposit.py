@@ -1,3 +1,6 @@
+"""
+Deposit module data.
+"""
 from dataclasses import dataclass
 from .module_data import ModuleData
 from decimal import Decimal
@@ -10,16 +13,26 @@ class DepositModuleData(ModuleData):
     amount: Decimal
     asset: str
     manager: str
+    asset_name: str
 
     # metadata
     decimals: int
 
     def to_abi_encoded(self):
+        amount_decimal = Decimal(self.amount)
+        scaled_amount = int(amount_decimal.scaleb(self.decimals))
         return encode(
-            ["uint", "address", "address"],
+            ["uint256", "address", "address"],
             [
-                int(self.amount * Decimal(10) ** self.decimals),
+                scaled_amount,
                 Web3.to_checksum_address(self.asset),
                 Web3.to_checksum_address(self.manager),
             ],
         )
+
+    def to_json(self):
+        return {
+            "amount": str(self.amount),
+            "asset_name": self.asset_name,
+            "is_atomic_signing": False,
+        }
