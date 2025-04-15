@@ -13,6 +13,7 @@ class WithdrawModuleData(ModuleData):
     asset: str
     amount: Decimal
     decimals: int
+    asset_name: str
 
     def to_abi_encoded(self):
 
@@ -28,6 +29,6 @@ class WithdrawModuleData(ModuleData):
     def to_json(self):
         return {
             "amount": str(self.amount),
-            "asset_name": "USDC",
+            "asset_name": self.asset_name,
             "is_atomic_signing": False,
         }

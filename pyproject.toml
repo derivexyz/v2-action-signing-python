@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "derive_action_signing"
-version = "0.0.10"
+version = "0.0.11"
 authors = [
   "Derive.xyz <joshua@derive.xyz>",
   "8baller <8baller@station.codes>"
