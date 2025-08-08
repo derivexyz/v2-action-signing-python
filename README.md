@@ -64,3 +64,9 @@ Thank you 8baller for building a full Python client for the v2 API. Much of the 
 2. `poetry install`
 3. `poetry shell` (activate venv)
 4. `pytest`
+
+**Note:** If you encounter issues with eth-typing compatibility when running tests, use:
+```
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest
+```
+This prevents loading of web3's pytest plugin which has compatibility issues with eth-typing v5.

@@ -26,4 +26,4 @@ jobs:
 
 
     - name: Unit-Test
-      run: poetry run pytest -s
+      run: PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 poetry run pytest -s
